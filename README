@@ -1,0 +1,9 @@
+Dependencies:
+pip install h5py
+
+Intended usage:
+1. get_data.sh - Script which downloads training data and extracts it.
+2. params.py - Constants used in the whole project. Edit this file to set preferred filenames, locations, etc.
+3. convert.py - Convert input images to numpy arrays.
+4. extract_features.py - Loads ResNet50 pretrained model and extracts features for all train images.
+5. train.py - Trains a NN which uses ResNet50's features as input and produces a prediction.
