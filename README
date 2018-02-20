@@ -7,3 +7,4 @@ Intended usage:
 3. convert.py - Convert input images to numpy arrays.
 4. extract_features.py - Loads ResNet50 pretrained model and extracts features for all train images.
 5. train.py - Trains a NN which uses ResNet50's features as input and produces a prediction.
+6. predict.py - Generates submission file
