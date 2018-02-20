@@ -11,14 +11,13 @@ t_size = (224, 224, 3)  # ResNet50's default input is 224x224
 
 def convert_train_set(labels_csv, images_dir, out_labels_fname, out_train_img_fname, out_classes_fname):
     """Convert training images to numpy array"""
-    aug_multiplier = 4
 
     labels = pd.read_csv(labels_csv)
 
     classes = labels['breed'].unique()
     img_count = labels.count()[0]
     
-    dataset = np.zeros(shape=(aug_multiplier * img_count, t_size[0], t_size[1], t_size[2]), dtype=np.uint8)
+    dataset = np.zeros(shape=(img_count, t_size[0], t_size[1], t_size[2]), dtype=np.uint8)
 
     print("Converting training images to numpy array")
     for img in labels.itertuples():
@@ -29,14 +28,9 @@ def convert_train_set(labels_csv, images_dir, out_labels_fname, out_train_img_fn
             print("Read %d of %d images" % (img[0], img_count), end='\r')
 
     print("Generate binary labels")
-    y = np.zeros((aug_multiplier * img_count, classes.shape[0]))
+    y = np.zeros((img_count, classes.shape[0]))
     for i in range(img_count):
         y[i] = labels['breed'][i] == classes
-
-    print("Augmenting training images")
-    datagen = ImageDataGenerator(rotation_range=40, width_shift_range=0.2, height_shift_range=0.2, 
-                                shear_range=0.2, zoom_range=0.2, horizontal_flip=True, fill_mode='nearest')
-    dataset[i,:], y[i,:] = datagen.flow(dataset, y, batch_size=img_count * (aug_multiplier-1))
 
     print("Saving labels to %s" % out_labels_fname)
     np.save(out_labels_fname, y)
@@ -76,3 +70,26 @@ def convert_test_set(images_dir, out_test_img_fname, out_test_img_ids_fname):
     np.save(out_test_img_ids_fname, np.array(img_ids).reshape(-1,1))
     print("Done")
     return True
+
+def augment(input_x, input_y, aug_x_basename, aug_y_basename, batch_size, batch_iterations):
+    x = np.load(input_x)
+    y = np.load(input_y)
+
+    datagen = ImageDataGenerator(rotation_range=40, width_shift_range=0.2, height_shift_range=0.2, 
+                                shear_range=0.2, zoom_range=0.2, horizontal_flip=True, fill_mode='nearest')
+    datagen.fit(x[0:100])
+
+    print("Augmenting training images")
+    
+    i = 0
+    for xa, ya in datagen.flow(x, y, batch_size=batch_size):
+        if i > batch_iterations:
+            break
+
+        dest = "%s%d.npy" % (aug_x_basename, i)
+        np.save(dest, xa)
+        dest = "%s%d.npy" % (aug_y_basename, i)
+        np.save(dest, ya)
+        print("Generated %d of %d" % (i*batch_size, batch_iterations*batch_size))
+        
+        i += 1

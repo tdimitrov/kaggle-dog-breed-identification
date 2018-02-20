@@ -5,7 +5,7 @@ import os
 import sys
 
 
-y = np.load(params.LABELS_NPY)
+y = np.load(params.Y_TRAIN_NPY)
 classes = np.load(params.CLASSES_NPY)
 features = np.load(params.TRAIN_FEATURES_NPY)
 

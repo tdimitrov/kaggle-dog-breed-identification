@@ -7,7 +7,7 @@ import pandas as pd
 
 model = load_model(params.MODEL_H5)
 X = np.load(params.TEST_FEATURES_NPY)
-ids = np.load(params.TEST_IMG_IDS_NPY)
+ids = np.load(params.X_TEST_IDS_NPY)
 classes = np.load(params.CLASSES_NPY)
 
 pred = model.predict(X, verbose=True)

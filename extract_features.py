@@ -2,9 +2,9 @@ import dogs.model as km
 import numpy as np
 import params
 
-train_data = np.load(params.TRAIN_IMG_NPY)
-test_data = np.load(params.TEST_IMG_NPY)
-labels = np.load(params.LABELS_NPY)
+train_data = np.load(params.X_TRAIN_NPY)
+test_data = np.load(params.X_TEST_NPY)
+labels = np.load(params.Y_TRAIN_NPY)
 
 m = km.get_resnet50()
 
