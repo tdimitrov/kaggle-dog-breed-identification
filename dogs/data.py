@@ -27,7 +27,10 @@ def convert_train_set(labels_csv, images_dir, out_labels_fname, out_train_img_fn
             print("Read %d of %d images" % (img[0], img_count), end='\r')
 
     print("Saving labels to %s" % out_labels_fname)
-    np.save(out_labels_fname, labels['breed'])
+    y = np.zeros((img_count, classes.shape[0]))
+    for i in range(img_count):
+        y[i] = labels['breed'][i] == classes
+    np.save(out_labels_fname, y)
 
     print("Saving train images to %s" % out_train_img_fname)
     np.save(out_train_img_fname, dataset)
