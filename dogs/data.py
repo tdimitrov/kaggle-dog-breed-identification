@@ -1,4 +1,4 @@
-from keras.preprocessing.image import img_to_array, load_img
+from keras.preprocessing.image import ImageDataGenerator, img_to_array, load_img
 from keras.layers import Input
 from keras.applications.resnet50 import ResNet50
 import pandas as pd
@@ -11,12 +11,14 @@ t_size = (224, 224, 3)  # ResNet50's default input is 224x224
 
 def convert_train_set(labels_csv, images_dir, out_labels_fname, out_train_img_fname, out_classes_fname):
     """Convert training images to numpy array"""
+    aug_multiplier = 4
+
     labels = pd.read_csv(labels_csv)
 
     classes = labels['breed'].unique()
     img_count = labels.count()[0]
     
-    dataset = np.zeros(shape=(img_count, t_size[0], t_size[1], t_size[2]), dtype=np.uint8)
+    dataset = np.zeros(shape=(aug_multiplier * img_count, t_size[0], t_size[1], t_size[2]), dtype=np.uint8)
 
     print("Converting training images to numpy array")
     for img in labels.itertuples():
@@ -26,10 +28,17 @@ def convert_train_set(labels_csv, images_dir, out_labels_fname, out_train_img_fn
         if img[0] % 100 == 0:
             print("Read %d of %d images" % (img[0], img_count), end='\r')
 
-    print("Saving labels to %s" % out_labels_fname)
-    y = np.zeros((img_count, classes.shape[0]))
+    print("Generate binary labels")
+    y = np.zeros((aug_multiplier * img_count, classes.shape[0]))
     for i in range(img_count):
         y[i] = labels['breed'][i] == classes
+
+    print("Augmenting training images")
+    datagen = ImageDataGenerator(rotation_range=40, width_shift_range=0.2, height_shift_range=0.2, 
+                                shear_range=0.2, zoom_range=0.2, horizontal_flip=True, fill_mode='nearest')
+    dataset[i,:], y[i,:] = datagen.flow(dataset, y, batch_size=img_count * (aug_multiplier-1))
+
+    print("Saving labels to %s" % out_labels_fname)
     np.save(out_labels_fname, y)
 
     print("Saving train images to %s" % out_train_img_fname)
