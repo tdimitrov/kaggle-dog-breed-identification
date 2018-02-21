@@ -9,8 +9,12 @@ CLASSES_NPY = "%s/classes.npy" % PROCESSED_DIR
 X_TEST_NPY = "%s/test-images.npy" % PROCESSED_DIR
 X_TEST_IDS_NPY = "%s/test-images-ids.npy" % PROCESSED_DIR
 
-TRAIN_FEATURES_NPY = "%s/train-features-resnet50.npy" % PROCESSED_DIR
-TEST_FEATURES_NPY = "%s/test-features-resnet50.npy" % PROCESSED_DIR
+FEATURES_DIR = "./data/features"
+TRAIN_FEATURES_NPY = "%s/original_train.npy" % FEATURES_DIR
+TEST_FEATURES_NPY = "%s/test.npy" % FEATURES_DIR
+AUG_FEATURES_BASENAME = "%s/augmented_" % FEATURES_DIR
+
+
 MODEL_H5 = "%s/model-weights.h5" % PROCESSED_DIR
 
 AUG_DIR = "./data/augmented"
