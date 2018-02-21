@@ -71,25 +71,42 @@ def convert_test_set(images_dir, out_test_img_fname, out_test_img_ids_fname):
     print("Done")
     return True
 
-def augment(input_x, input_y, aug_x_basename, aug_y_basename, batch_size, batch_iterations):
-    x = np.load(input_x)
-    y = np.load(input_y)
 
+def augment(x, y, aug_x_basename, aug_y_basename, batch_size, start_fname_id, iters_per_batch):
+    """Augments a set of images (in np.array format) and labels. Saves the files on disk in NPY format.
+    Input:
+    x, y                            - numpy arrays with image data and labels
+    aug_x_basename, aug_y_basename  - string pattern which will be used as filename for output files. fname_id
+                                        and '.npy' will be appended to it. The whole string should represent
+                                        ready-to-use full/relative path.
+    batch_size                      - how many images to store in a single batch. Each batch is written to a 
+                                        separate file
+    start_fname_id                  - the first number to append to the basename. This parameter is used to set
+                                        initial value for the case when the function is called multiple times
+                                        with the same output dir.
+    iters_per_batch                 - how many times to get values from the generator. Each iteration is saved
+                                        in separate file.
+    """
+                                    
     datagen = ImageDataGenerator(rotation_range=40, width_shift_range=0.2, height_shift_range=0.2, 
                                 shear_range=0.2, zoom_range=0.2, horizontal_flip=True, fill_mode='nearest')
-    datagen.fit(x[0:100])
-
-    print("Augmenting training images")
     
-    i = 0
-    for xa, ya in datagen.flow(x, y, batch_size=batch_size):
-        if i > batch_iterations:
-            break
+    datagen.fit(x)
+    generator = datagen.flow(x, y, batch_size=batch_size)
 
-        dest = "%s%d.npy" % (aug_x_basename, i)
-        np.save(dest, xa)
-        dest = "%s%d.npy" % (aug_y_basename, i)
-        np.save(dest, ya)
-        print("Generated %d of %d" % (i*batch_size, batch_iterations*batch_size))
-        
+    i = start_fname_id
+    iters = 0
+    for xa, ya in generator:
         i += 1
+        iters += 1
+
+        print("\tfile %d of %d" % (iters, iters_per_batch), end='\r')
+        
+        dest_x = "%s%d.npy" % (aug_x_basename, i)
+        np.save(dest_x, xa)
+        dest_y = "%s%d.npy" % (aug_y_basename, i)
+        np.save(dest_y, ya)
+
+        if iters == iters_per_batch:
+            break
+    print("")

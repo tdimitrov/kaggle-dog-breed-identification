@@ -13,12 +13,12 @@ TRAIN_FEATURES_NPY = "%s/train-features-resnet50.npy" % PROCESSED_DIR
 TEST_FEATURES_NPY = "%s/test-features-resnet50.npy" % PROCESSED_DIR
 MODEL_H5 = "%s/model-weights.h5" % PROCESSED_DIR
 
-TRAIN_DIR = "./data/train"
-AUG_X_BASENAME = "%s/x_"
-AUG_Y_BASENAME = "%s/y_"
-AUG_BATCH_SIZE = 500
-AUG_BATCH_COUNT = 8
+AUG_DIR = "./data/augmented"
+AUG_X_BASENAME = "%s/x_" % AUG_DIR
+AUG_Y_BASENAME = "%s/y_" % AUG_DIR
+
 
 EPOCHS = 100
+BATCH_SIZE = 500
 
 SUBMISSION_CSV = "data/submission.csv"
