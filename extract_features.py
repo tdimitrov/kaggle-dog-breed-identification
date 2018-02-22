@@ -1,7 +1,6 @@
 import dogs as kd
 import params
 import numpy as np
-import glob
 
 train_data = np.load(params.X_TRAIN_NPY)
 test_data = np.load(params.X_TEST_NPY)
@@ -16,11 +15,10 @@ kd.model.extract_features(m, train_data, params.TRAIN_FEATURES_NPY)
 kd.model.extract_features(m, test_data, params.TEST_FEATURES_NPY)
 
 # Convert augmented images
-pattern = "%s*" % (params.AUG_X_BASENAME)
-x_list = glob.glob(pattern)
+x_list = kd.helpers.get_aug_x_files(params.AUG_X_BASENAME)
 
 for fname_x in x_list:
-    id = int(fname_x.replace(params.AUG_X_BASENAME, '').replace('.npy', ''))  # get id from fname
+    id = kd.helpers.get_aug_file_id(fname_x, params.AUG_X_BASENAME) # get id from fname
     x = np.load(fname_x)
 
     fname_dest = "%s%d.npy" % (params.AUG_FEATURES_BASENAME, id)    # fname for the features
