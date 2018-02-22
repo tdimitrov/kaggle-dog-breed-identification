@@ -23,6 +23,6 @@ AUG_Y_BASENAME = "%s/y_" % AUG_DIR
 
 
 EPOCHS = 100
-BATCH_SIZE = 500
+
 
 SUBMISSION_CSV = "data/submission.csv"
