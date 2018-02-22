@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 from glob import glob
 import os.path
+import dogs.helpers as dh
 
 
 t_size = (224, 224, 3)  # ResNet50's default input is 224x224
@@ -110,3 +111,26 @@ def augment(x, y, aug_x_basename, aug_y_basename, batch_size, start_fname_id, it
         if iters == iters_per_batch:
             break
     print("")
+
+
+class AugDataGenerator:
+    def __init__(self, aug_x_basename, aug_y_basename):
+        self.__xa_pattern = aug_x_basename
+        self.__ya_pattern = aug_y_basename
+        self.__xa_list = dh.get_aug_x_files(aug_x_basename)
+
+    def __load_next(self, id):
+        x = np.load("%s%d.npy" % (self.__xa_pattern, id))
+        y = np.load("%s%d.npy" % (self.__ya_pattern, id))
+        assert(x.shape[0] == y.shape[0])
+        return (x,y)            
+
+    def generate(self):
+        while True:
+            for f in self.__xa_list:
+                id = dh.get_aug_file_id(f, self.__xa_pattern)
+                x, y = self.__load_next(id)
+                yield x, y
+
+    def get_steps(self):
+        return len(self.__xa_list)
