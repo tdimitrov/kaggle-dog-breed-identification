@@ -9,5 +9,5 @@ X_TEST_IDS_NPY = "%s/test-images-ids.npy" % PROCESSED_DIR
 CLASSES_NPY = "%s/classes.npy" % PROCESSED_DIR
 MODEL_H5 = "%s/model-weights.h5" % PROCESSED_DIR
 
-EPOCHS = 100
+EPOCHS = 40
 SUBMISSION_CSV = "data/submission.csv"
