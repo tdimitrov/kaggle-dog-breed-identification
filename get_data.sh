@@ -46,3 +46,5 @@ wget ${URL} -P ${DEST_DIR}/
 cd ${DEST_DIR}
 tar -zxf input.tar.gz
 cd -
+
+python ./convert.py
