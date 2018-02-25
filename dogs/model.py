@@ -11,6 +11,10 @@ def get_model(num_classes):
     inp = Input(shape=(224, 224, 3))
     resnet = ResNet50(include_top=False, weights='imagenet', input_tensor=inp)
     
+    # Freeze all layers
+    for l in resnet.layers:
+        l.trainable = False
+
     d = Flatten()(resnet.output)
     d = Dense(384, activation='relu', name='dense_hidden_1')(d)
     d = Dropout(0.6)(d)
